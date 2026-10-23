@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verisight Shield — Enterprise Digital Forensics & AI Media Detection</title>
+    <meta name="description" content="Enterprise-grade digital forensics and open-weight AI-generated media detection platform offering evidence verification, metadata auditing, and courtroom-ready reporting." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              shield: {
+                bg: '#0B1220',          // Primary background
+                subtle: '#111C2E',      // Secondary background
+                card: '#172438',        // Cards and panels
+                accent: '#18A999',      // Primary accent (teal/cyan)
+                secondary: '#3B82F6',   // Secondary accent (blue)
+                text: '#F1F5F9',        // Primary text
+                muted: '#94A3B8',       // Secondary text
+                border: '#263449',      // Borders
+                warn: '#E6A23C',        // Warning (amber)
+                risk: '#E35D6A',        // High-risk indicators (coral red)
+                verified: '#20B486',    // Verified evidence (emerald green)
+              },
+              forensic: {
+                900: '#0B1220',
+                800: '#111C2E',
+                700: '#172438',
+                accent: '#18A999',
+                danger: '#E35D6A',
+                safe: '#20B486',
+                warn: '#E6A23C',
+              }
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+      /* Clean scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0B1220;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #263449;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #18A999;
+      }
+
+      /* Print styles for official forensic reports */
+      @media print {
+        @page {
+          margin: 12mm;
+          size: auto;
+        }
+        
+        html, body {
+          visibility: hidden;
+          height: auto !important;
+          overflow: visible !important;
+          background: #ffffff !important;
+          color: #0f172a !important;
+        }
+
+        body * {
+          visibility: hidden;
+        }
+
+        #printable-report, #printable-report * {
+          visibility: visible;
+        }
+
+        #printable-report {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: visible !important;
+          display: block !important;
+          background: #ffffff !important;
+          color: #0f172a !important;
+        }
+
+        img, svg, canvas {
+          break-inside: avoid;
+        }
+        
+        .no-print {
+          display: none !important;
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+</head>
+  <body class="bg-[#0B1220] text-[#F1F5F9] antialiased min-h-screen font-sans selection:bg-[#18A999]/30 selection:text-white">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
