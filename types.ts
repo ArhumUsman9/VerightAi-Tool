@@ -127,6 +127,7 @@ export interface ForensicReport {
   legalAdmissibilityNote: string;
   victimSafetyGuidance: string[];
   timelineData: AnomalyPoint[];
+  heatmapData?: string; // Base64 encoded heatmap visualization
 }
 
 export interface AnalysisRequest {

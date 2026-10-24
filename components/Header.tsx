@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Lock, Cpu, Layers, BookOpen, HeartHandshake, Menu, X } from 'lucide-react';
+import { ShieldCheck, Lock, Cpu, Layers, BookOpen, HeartHandshake, Menu, X, Code } from 'lucide-react';
 import { PageView } from '../types';
 
 interface HeaderProps {
@@ -15,6 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, hasActi
     { id: 'workspace', label: 'Analysis Workspace', icon: Layers },
     { id: 'overview', label: 'System Overview', icon: Cpu },
     { id: 'report', label: 'Evidence Report', icon: ShieldCheck, badge: hasActiveReport ? 'Active' : undefined },
+    { id: 'technology', label: 'Methodology & Tech', icon: Code },
     { id: 'skills', label: 'Agent Skills', icon: BookOpen },
     { id: 'safety', label: 'Digital Safety & Privacy', icon: HeartHandshake },
   ];

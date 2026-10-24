@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { UploadCloud, FileImage, Image as ImageIcon, Video, Music, Shield, CheckCircle, Info, Hash, AlertCircle } from 'lucide-react';
+import { UploadCloud, FileImage, ImageIcon, Video, Music, Shield, CheckCircle, Info, Hash, AlertCircle, Lock } from 'lucide-react';
 import { MediaType } from '../types';
 
 interface UploadZoneProps {
@@ -32,7 +32,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileSelected }) => {
       setStagedPreview(dataUrl);
 
       if (file.type.startsWith('image/')) {
-        const img = new Image();
+        const img = document.createElement('img');
         img.onload = () => {
           setStagedDimensions(`${img.naturalWidth} x ${img.naturalHeight} px`);
         };
@@ -117,7 +117,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileSelected }) => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'sample_synthetic_diffusion_portrait.jpg', { type: 'image/jpeg' });
+          const file = new window.File([blob], 'sample_synthetic_diffusion_portrait.jpg', { type: 'image/jpeg' });
           handleStageFile(file);
         }
       }, 'image/jpeg', 0.94);
@@ -142,7 +142,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileSelected }) => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'sample_authentic_dslr_capture.jpg', { type: 'image/jpeg' });
+          const file = new window.File([blob], 'sample_authentic_dslr_capture.jpg', { type: 'image/jpeg' });
           handleStageFile(file);
         }
       }, 'image/jpeg', 0.95);
@@ -161,7 +161,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileSelected }) => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'sample_localized_manipulation.png', { type: 'image/png' });
+          const file = new window.File([blob], 'sample_localized_manipulation.png', { type: 'image/png' });
           handleStageFile(file);
         }
       }, 'image/png');
@@ -176,7 +176,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileSelected }) => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'sample_stripped_metadata_ai.webp', { type: 'image/webp' });
+          const file = new window.File([blob], 'sample_stripped_metadata_ai.webp', { type: 'image/webp' });
           handleStageFile(file);
         }
       }, 'image/webp', 0.85);

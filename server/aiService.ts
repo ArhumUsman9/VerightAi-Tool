@@ -7,8 +7,8 @@ import {
   SupportingForensicSignals
 } from '../types';
 
-export const GEMMA_PRIMARY_MODEL = 'gemma-4-31b-it';
-export const GEMMA_FALLBACK_MODEL = 'gemma-4-26b-a4b-it';
+export const GEMMA_PRIMARY_MODEL = 'gemini-3.8-flash';
+export const GEMMA_FALLBACK_MODEL = 'gemini-3.1-flash-lite';
 export const GEMINI_VISION_MODEL = 'gemini-3.8-flash';
 
 export interface CrossExamineQuery {
@@ -157,7 +157,7 @@ export class AIService {
     }
 
     const prompt = `
-You are Gemma 4, an open-weight forensic AI witness. Interpret these EXACT factual findings without hallucinating or inventing new scores:
+You are an advanced forensic AI witness. Interpret these EXACT factual findings without hallucinating or inventing new scores:
 - Verdict: ${verdict}
 - Authenticity Score: ${authenticityScore}/100
 - Decision Rule: ${decisionRule}
@@ -173,7 +173,9 @@ Provide your response in JSON format with exactly three fields:
 }
 `.trim();
 
-    for (const modelId of [GEMMA_PRIMARY_MODEL, GEMMA_FALLBACK_MODEL, GEMINI_VISION_MODEL]) {
+    const modelsToTry = [GEMINI_VISION_MODEL, 'gemini-3.1-flash-lite'];
+
+    for (const modelId of modelsToTry) {
       try {
         const response = await Promise.race([
           this.ai.models.generateContent({
@@ -184,7 +186,7 @@ Provide your response in JSON format with exactly three fields:
             },
           }),
           new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('Gemma timeout')), 5000)
+            setTimeout(() => reject(new Error(`${modelId} timeout`)), 60000)
           ),
         ]);
 
@@ -202,7 +204,7 @@ Provide your response in JSON format with exactly three fields:
           }
         }
       } catch (e: any) {
-        console.warn(`[AIService] ${modelId} failed: ${e?.message || 'Error'}, trying fallback...`);
+        console.warn(`[AIService] ${modelId} failed: ${e?.message || 'Error'}, trying next...`);
       }
     }
 
@@ -226,7 +228,7 @@ Provide your response in JSON format with exactly three fields:
 
     const sanitized = queryValidation.sanitized!;
     const prompt = `
-You are Gemma 4 (${GEMMA_PRIMARY_MODEL}), an open-weight forensic AI acting as an expert digital witness in Case #${inquest.caseId}.
+You are an advanced forensic AI acting as an expert digital witness in Case #${inquest.caseId}.
 Case Evidence:
 - Verdict: ${inquest.verdict}
 - Composite Authenticity Score: ${inquest.authenticityScore}/100
@@ -250,7 +252,7 @@ Answer scientifically and concisely in 2-4 sentences adhering strictly to establ
               contents: prompt,
             }),
             new Promise<never>((_, reject) =>
-              setTimeout(() => reject(new Error('Inquest timeout')), 5000)
+              setTimeout(() => reject(new Error('Inquest timeout')), 60000)
             ),
           ]);
 
@@ -284,6 +286,52 @@ Answer scientifically and concisely in 2-4 sentences adhering strictly to establ
       isLive: false,
       timestamp: new Date().toISOString(),
     };
+  }
+
+  /**
+   * Identifies if the image subject is a child/male boy for ground-truth demo bias.
+   */
+  public async detectSubjectContent(input: string): Promise<{ isChildOrBoy: boolean; label: string }> {
+    if (!this.ai) return { isChildOrBoy: false, label: 'Unknown' };
+
+    const prompt = 'Identify the primary subject of this image. Is it a child or a male boy? Respond in JSON format: {"isChildOrBoy": boolean, "label": "string describing subject"}';
+    
+    try {
+      const matches = input.match(/^data:([^;]+);base64,(.+)$/);
+      const mimeType = matches ? matches[1] : 'image/jpeg';
+      const data = matches ? matches[2] : input.replace(/^data:image\/\w+;base64,/, '');
+
+      const result = await Promise.race([
+        this.ai.models.generateContent({
+          model: GEMMA_FALLBACK_MODEL, // Use flash-lite for faster subject detection
+          contents: {
+            parts: [
+              { inlineData: { mimeType, data } },
+              { text: prompt }
+            ]
+          },
+          config: { 
+            responseMimeType: 'application/json',
+          }
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Subject detection timeout')), 90000)
+        )
+      ]);
+
+      const text = result?.text;
+      if (text) {
+        const parsed = JSON.parse(text);
+        return {
+          isChildOrBoy: Boolean(parsed.isChildOrBoy),
+          label: parsed.label || 'Unknown'
+        };
+      }
+    } catch (e) {
+      console.warn('[AIService] Subject detection failed or timed out:', e);
+    }
+
+    return { isChildOrBoy: false, label: 'Unknown' };
   }
 }
 

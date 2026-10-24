@@ -1,6 +1,6 @@
 {
-  "name": "VeriSight-AI",
-  "description": "Professional-grade forensic deepfake detection platform offering AI-powered analysis, evidence verification, and court-ready reporting.",
+  "name": "Verisight Shield",
+  "description": "Enterprise-grade digital forensics and open-weight AI-generated media detection platform offering evidence verification, metadata auditing, and courtroom-ready reporting.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

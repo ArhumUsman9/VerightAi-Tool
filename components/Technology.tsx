@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Layers, Database, Code, Zap, Shield, FileCheck } from 'lucide-react';
+import { Cpu, Layers, Database, Code, Zap, Shield, FileCheck, BookOpen, HelpCircle } from 'lucide-react';
 
 export const Technology: React.FC = () => {
   return (

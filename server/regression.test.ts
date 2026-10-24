@@ -332,7 +332,7 @@ test('Regression Suite: 10 Labeled Forensic Cases', async (t) => {
       rawTagsCount: 0,
       observedTags: {},
     };
-    const signals = computePixelForensics(null);
+    const signals = computePixelForensics(Buffer.alloc(0), null);
 
     const decision = evaluateEvidenceFusion(neural, meta, signals);
     const passed = decision.verdict === Verdict.INCONCLUSIVE;
@@ -376,7 +376,7 @@ test('Regression Suite: 10 Labeled Forensic Cases', async (t) => {
       rawTagsCount: 0,
       observedTags: {},
     };
-    const signals = computePixelForensics(null);
+    const signals = computePixelForensics(Buffer.alloc(0), null);
 
     const decision = evaluateEvidenceFusion(neural, meta, signals);
     const passed = decision.verdict === Verdict.INCONCLUSIVE;

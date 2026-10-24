@@ -10,10 +10,14 @@ import { ShieldCheck, Lock, Layers } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<PageView>('workspace');
-  const [activeReport, setActiveReport] = useState<ForensicReport | null>(null);
+  const [reports, setReports] = useState<ForensicReport[]>([]);
+  const [activeReportId, setActiveReportId] = useState<string | null>(null);
+
+  const activeReport = reports.find(r => r.caseId === activeReportId) || (reports.length > 0 ? reports[reports.length - 1] : null);
 
   const handleReportAvailable = (report: ForensicReport) => {
-    setActiveReport(report);
+    setReports(prev => [...prev, report]);
+    setActiveReportId(report.caseId);
   };
 
   const renderPage = () => {
@@ -24,6 +28,8 @@ const App: React.FC = () => {
             onReportAvailable={handleReportAvailable}
             externalReport={activeReport}
             initialViewMode="dashboard"
+            history={reports}
+            onSelectHistory={setActiveReportId}
           />
         );
       case 'overview':

@@ -175,10 +175,21 @@ export const ReportView: React.FC<ReportViewProps> = ({ report, imageSrc, onBack
 
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 mb-2 border-b border-slate-200">
-              Visual Evidence Exhibit
+              Visual Evidence & Anomaly Heatmap
             </h3>
-            <div className="h-44 bg-slate-100 border border-slate-200 rounded p-2 flex items-center justify-center">
-              <img src={imageSrc} alt="Exhibit" className="h-full object-contain" />
+            <div className="grid grid-cols-2 gap-2 h-44">
+              <div className="bg-slate-100 border border-slate-200 rounded p-1 flex flex-col items-center justify-center relative">
+                <span className="absolute top-1 left-1 text-[8px] font-mono text-slate-400">ORIGINAL</span>
+                <img src={imageSrc} alt="Exhibit" className="h-full object-contain max-h-40" />
+              </div>
+              <div className="bg-slate-900 border border-slate-200 rounded p-1 flex flex-col items-center justify-center relative">
+                <span className="absolute top-1 left-1 text-[8px] font-mono text-slate-400">HEATMAP</span>
+                {report.heatmapData ? (
+                  <img src={report.heatmapData} alt="Heatmap" className="h-full object-contain max-h-40" />
+                ) : (
+                  <div className="text-[10px] text-slate-600 font-mono">Heatmap Unavailable</div>
+                )}
+              </div>
             </div>
           </div>
         </div>

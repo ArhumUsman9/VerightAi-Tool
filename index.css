@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --color-shield-bg: #0B1220;
+  --color-shield-subtle: #111C2E;
+  --color-shield-card: #172438;
+  --color-shield-accent: #18A999;
+  --color-shield-secondary: #3B82F6;
+  --color-shield-text: #F1F5F9;
+  --color-shield-muted: #94A3B8;
+  --color-shield-border: #263449;
+  --color-shield-warn: #E6A23C;
+  --color-shield-risk: #E35D6A;
+  --color-shield-verified: #20B486;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-shield-bg text-shield-text antialiased min-h-screen font-sans;
+  }
+}
+
+/* Print styles for official forensic reports */
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+  
+  html, body {
+    visibility: hidden;
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #printable-report, #printable-report * {
+    visibility: visible;
+  }
+
+  #printable-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  img, svg, canvas {
+    break-inside: avoid;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}

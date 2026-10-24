@@ -11,10 +11,11 @@ interface ResultsDashboardProps {
   imageSrc: string;
   onViewReport: () => void;
   onReset: () => void;
+  history?: ForensicReport[];
 }
 
-export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ report, imageSrc, onViewReport, onReset }) => {
-  const [activeFilter, setActiveFilter] = useState<'normal' | 'ela' | 'noise'>('normal');
+export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ report, imageSrc, onViewReport, onReset, history }) => {
+  const [activeFilter, setActiveFilter] = useState<'normal' | 'ela' | 'noise' | 'heatmap'>('normal');
   const [languageMode, setLanguageMode] = useState<'en' | 'ur'>('en');
   const [inquestQuery, setInquestQuery] = useState('');
   const [isInquestLoading, setIsInquestLoading] = useState(false);
@@ -182,27 +183,30 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ report, imag
               
               {/* Filter toggles */}
               <div className="flex space-x-1">
-                {(['normal', 'ela', 'noise'] as const).map((filter) => (
-                  <button
-                    key={filter}
-                    type="button"
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-2 py-0.5 text-[10px] font-mono uppercase rounded transition ${
-                      activeFilter === filter
-                        ? 'bg-[#18A999] text-white'
-                        : 'bg-[#172438] text-[#94A3B8] hover:text-[#F1F5F9] border border-[#263449]'
-                    }`}
-                  >
-                    {filter}
-                  </button>
-                ))}
+                {(['normal', 'ela', 'noise', 'heatmap'] as const).map((filter) => {
+                  if (filter === 'heatmap' && !report.heatmapData) return null;
+                  return (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setActiveFilter(filter)}
+                      className={`px-2 py-0.5 text-[10px] font-mono uppercase rounded transition ${
+                        activeFilter === filter
+                          ? 'bg-[#18A999] text-white'
+                          : 'bg-[#172438] text-[#94A3B8] hover:text-[#F1F5F9] border border-[#263449]'
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Viewport */}
             <div className="relative bg-[#0B1220] min-h-[300px] max-h-[420px] flex items-center justify-center p-3 overflow-hidden">
               <img
-                src={imageSrc}
+                src={activeFilter === 'heatmap' && report.heatmapData ? report.heatmapData : imageSrc}
                 alt="Analyzed Exhibit"
                 className={`max-h-[380px] w-auto object-contain transition-all duration-300 ${
                   activeFilter === 'ela'
@@ -220,6 +224,11 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ report, imag
               {activeFilter === 'noise' && (
                 <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[10px] font-mono text-[#18A999] border border-[#18A999]/40">
                   HIGH-PASS NOISE SPECTRUM (BAYER PATTERN AUDIT)
+                </div>
+              )}
+              {activeFilter === 'heatmap' && (
+                <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[10px] font-mono text-[#E35D6A] border border-[#E35D6A]/40">
+                  SPATIAL ANOMALY HEATMAP (ELA DIFFERENTIAL)
                 </div>
               )}
             </div>
@@ -543,6 +552,50 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ report, imag
               </div>
             )}
           </div>
+
+          {/* Comparative Timeline Insights (Contextual contrast between AI/Real) */}
+          {history && history.length > 1 && (
+            <div className="bg-[#172438] rounded-lg border border-[#263449] p-5 space-y-4">
+              <div className="flex items-center space-x-2 pb-3 border-b border-[#263449]">
+                <Layers className="h-4 w-4 text-[#18A999]" />
+                <h4 className="text-xs font-semibold text-[#F1F5F9] uppercase tracking-wider">
+                  Comparative Forensic Insight
+                </h4>
+              </div>
+              <div className="space-y-3">
+                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                  Platform has identified <strong className="text-[#F1F5F9]">{history.length}</strong> linked investigations in the current session.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {history.filter(h => h.caseId !== report.caseId).slice(-2).map((h) => {
+                    const isContrast = h.verdict !== report.verdict;
+                    return (
+                      <div key={h.caseId} className={`p-3 rounded border ${isContrast ? 'bg-[#18A999]/5 border-[#18A999]/20' : 'bg-[#111C2E] border-[#263449]'} text-[10px]`}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-mono text-[#18A999]">REF: {h.caseId}</span>
+                          <span className={`px-1.5 py-0.5 rounded ${
+                            h.verdict === Verdict.LIKELY_AI ? 'text-[#E35D6A] bg-[#E35D6A]/10' : 'text-[#20B486] bg-[#20B486]/10'
+                          }`}>
+                            {h.verdict === Verdict.LIKELY_AI ? 'AI' : 'REAL'}
+                          </span>
+                        </div>
+                        <p className="text-[#F1F5F9] font-medium truncate">{h.fileName}</p>
+                        {isContrast && (
+                          <p className="text-[#94A3B8] mt-2 italic leading-snug">
+                            {report.verdict === Verdict.NO_STRONG_SYNTHETIC 
+                              ? `Contrast: Unlike ${h.caseId} (Synthetic), this exhibit shows consistent sensor noise and lacks the 8x8 upsampling lattice.`
+                              : `Contrast: Unlike ${h.caseId} (Authentic), this exhibit demonstrates clear neural synthetic signatures and frequency domain anomalies.`
+                            }
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
         </div>
 
